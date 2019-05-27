@@ -1,0 +1,6 @@
+dagmc.h5m
+__pycache__
+*.h5
+*.xml
+*.out
+*~
