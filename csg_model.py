@@ -7,18 +7,20 @@ def create_openmc_geom():
 
     # make materials
     water = openmc.Material(name="water")
-    water.add_nuclide('H1', 0.6666, 'ao')
-    water.add_nuclide('O16',0.3333, 'ao')
+    water.add_nuclide('H1', 0.111915, 'wo')
+    water.add_nuclide('O16', 0.888085, 'wo')
     water.set_density('g/cc', 1.0)
 
     air = openmc.Material(name="air")
-    air.add_nuclide('N14', 0.8, 'ao')
-    air.add_nuclide('O16', 0.2, 'ao')
-    air.set_density('g/cc', 0.001225)
+    air.add_element('C', 0.000124, 'wo')
+    air.add_element('N', 0.755268, 'wo')
+    air.add_nuclide('O16', 0.231781, 'wo')
+    air.add_element('Ar', 0.012827, 'wo')
+    air.set_density('g/cc', 0.001205)
 
     lead = openmc.Material(name="lead")
-    lead.add_nuclide('Pb204', 1.0, 'ao')
-    lead.set_density('g/cc', 11.34)
+    lead.add_element('Pb', 1.0, 'wo')
+    lead.set_density('g/cc', 11.35)
 
     mats = openmc.Materials([water, air, lead])
 
