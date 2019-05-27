@@ -104,9 +104,10 @@ def create_openmc_geom():
     cells.append(water_shell)
 
     # space between collimator and water vol
-    void = openmc.Cell()
-    void.region = ~bbox & ~water_shell.region
-    cells.append(void)
+    air_gap = openmc.Cell()
+    air_gap.region = ~bbox & ~water_shell.region
+    air_gap.fill = air
+    cells.append(air_gap)
 
     root_universe = openmc.Universe()
     root_universe.add_cells(cells)
