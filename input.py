@@ -8,14 +8,14 @@ from openmc.stats import Point
 
 from csg_model import create_openmc_geom
 
-def main(geom_type, run=False):
+def main(geom_type, run=False, plot=False):
     #
     model = openmc.model.Model()
 
     # settings
     model.settings.batches = 5
     model.settings.inactive = 0
-    model.settings.particles = 100 # particle per batch
+    model.settings.particles = 100000 # particle per batch
     model.settings.run_mode = 'fixed source'
     model.settings.output = {'tallies':True, 'summary':True}
 
@@ -91,10 +91,27 @@ def main(geom_type, run=False):
     tallies.append(tally)
     tallies.export_to_xml()
 
+    # plot 2D slice
+    if plot:
+        plot1 = openmc.Plot()
+        plot1.basis = 'xy'
+        plot1.origin = (0, 0, 0)
+        plot1.width = (120.0, 120.0)
+        plot1.color_by = 'material'
+        plot1.pixels = (1200, 1200)
+        plots = openmc.Plots()
+        plots.append(plot1)
+        plots.export_to_xml()
+
+
     # run the problem
     #openmc.run(mpi_args=['mpiexec', '-n', '4'])
     if run:
         openmc.run()
+
+    # plot the 2D slice
+    if plot:
+        openmc.plot_geometry(output=True, openmc_exec='openmc', cwd='.')
 
 if __name__ == "__main__":
 
@@ -107,6 +124,10 @@ if __name__ == "__main__":
     ap.add_argument('-r', '--run', default=False, action='store_true',
                     help="If present, run OpenMC after creating the model")
 
+
+    ap.add_argument('-p', '--plot', default=False, action="store_true",
+                     help="Plot the 2D slice of geometry")
+
     args = ap.parse_args()
 
-    main(args.geom, args.run)
+    main(args.geom, args.run, args.plot)
