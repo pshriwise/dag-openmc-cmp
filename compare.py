@@ -6,6 +6,8 @@ from math import*
 import openmc
 import matplotlib.pyplot as plt
 
+num_e_groups = 175
+num_ves = 80
 e_bins =np.array(
         [1.00001E-007, 4.13994E-007, 5.31579E-007, 6.82560E-007, 8.76425E-007,
          1.12535E-006, 1.44498E-006, 1.85539E-006, 2.38237E-006, 3.05902E-006,
@@ -91,7 +93,7 @@ def histogram_indicator(indicator, label='', figname="similarity.png"):
     plt.close()
 
 
-def treat_n_flux(n_flux):
+def remove_nan(n_flux):
     """
     Set nan to zero.
     """
@@ -101,45 +103,55 @@ def treat_n_flux(n_flux):
                 n_flux[v][e] = 0.0
     return n_flux
 
-def n_flux_difference_analysis(n_flux1, n_flux2):
+def n_flux_difference_analysis(n_flux1, n_flux2, item='flux'):
     """
     n_flux1 is the dagopenmc,
     n_flux2 is the openmc
+    item could be 'flux' or 'flux_rel_err'
     """
     # draw flux compare of first and last mesh element
     for i in range(num_ves):
-        figname = ''.join(["n_flux_m", str(i), ".png"])
-        figtitle = ''.join(["Comparison of neutron flux of mesh ", str(i)])
-        plot_n_flux(n_flux_dagopenmc[i], n_flux_openmc[i], figname=figname, figtitle=figtitle)
-    # calculate cosine similarity for each volume element
-    similarities = np.zeros(num_ves)
-    mse = np.zeros(num_ves)
-    for i in range(num_ves):
-        similarities[i] = cosine_similarity(n_flux_dagopenmc[i],
-                n_flux_openmc[i])
-        mse[i] = mean_squared_error(n_flux_dagopenmc[i], n_flux_openmc[i])
-    # 
-    histogram_indicator(similarities, label='Cosine similarity')
-    histogram_indicator(mse, label='Mesn squared error', figname="mse.png")
+        figname = ''.join(['n_', item, '_m', str(i), '.png'])
+        figtitle = ''.join(["Comparison of neutron ",  item, " of mesh ", str(i)])
+        plot_n_flux(n_flux1[i], n_flux2[i], figname=figname, figtitle=figtitle)
+    if item == 'flux':
+        # calculate cosine similarity for each volume element
+        similarities = np.zeros(num_ves)
+        mse = np.zeros(num_ves)
+        for i in range(num_ves):
+            similarities[i] = cosine_similarity(n_flux1[i],
+                    n_flux2[i])
+            mse[i] = mean_squared_error(n_flux1[i], n_flux2[i])
+        # 
+        histogram_indicator(similarities, label='Cosine similarity')
+        histogram_indicator(mse, label='Mesn squared error', figname="mse.png")
 
+
+def get_flux_error_from_sp(filename, num_e_groups, num_ves):
+    sp = openmc.StatePoint(filename)
+    tally = sp.get_tally(scores=['flux'])
+    flux = np.reshape(tally.mean[:], newshape=(num_e_groups, num_ves)).transpose()
+    flux = remove_nan(flux)
+    std_dev = np.reshape(tally.std_dev[:], newshape=(num_e_groups, num_ves)).transpose()
+    std_dev = remove_nan(std_dev)
+    # calculate rel_err
+    rel_err = np.zeros_like(std_dev)
+    for i in range(std_dev.shape[0]):
+        for j in range(std_dev.shape[1]):
+            if flux[i][j] > 0:
+                rel_err[i][j] = std_dev[i][j] / flux[i][j]
+    return flux, rel_err
 
 if __name__ == '__main__':
-    num_e_groups = 175
-    num_ves = 80
     # read dagopenmc sp
     dagopenmc_sp_filename = os.path.join(os.getcwd(), "dagopenmc_run", "statepoint.5.h5")
-    sp_dagopenmc = openmc.StatePoint(dagopenmc_sp_filename)
-    tally_dagopenmc = sp_dagopenmc.get_tally(scores=['flux'])
-    n_flux_dagopenmc = np.reshape(tally_dagopenmc.mean[:], newshape=(num_e_groups, num_ves)).transpose()
-    n_flux_dagopenmc = treat_n_flux(n_flux_dagopenmc)
+    n_flux_dagopenmc, n_flux_rel_err_dagopenmc = get_flux_error_from_sp(dagopenmc_sp_filename, num_e_groups, num_ves)
     # read openmc sp, reference.
     openmc_sp_filename = os.path.join(os.getcwd(), "openmc_run", "statepoint.5.h5")
-    sp_openmc = openmc.StatePoint(openmc_sp_filename)
-    tally_openmc = sp_openmc.get_tally(scores=['flux'])
-    n_flux_openmc = np.reshape(tally_openmc.mean[:], newshape=(num_e_groups, num_ves)).transpose()
-    n_flux_openmc = treat_n_flux(n_flux_openmc)
+    n_flux_openmc, n_flux_rel_err_openmc = get_flux_error_from_sp(openmc_sp_filename, num_e_groups, num_ves)
     # compare n_flux
-    #n_flux_difference_analysis(n_flux_dagopenmc, n_flux_openmc)
+    n_flux_difference_analysis(n_flux_dagopenmc, n_flux_openmc)
+    n_flux_difference_analysis(n_flux_rel_err_dagopenmc, n_flux_rel_err_openmc, item='flux_rel_err')
     # compare n_flux_total
     n_flux_total_dagopenmc = np.sum(n_flux_dagopenmc, axis=1)
     n_flux_total_openmc = np.sum(n_flux_openmc, axis=1)
