@@ -60,21 +60,21 @@ def mean_squared_error(x, y):
     denominator = len(x)
     return numerator/denominator
 
-def plot_n_flux(n_flux1, n_flux2, label1='DagOpenMC', label2='OpenMC',
+def plot_n_flux(n_flux1, n_flux2, x_bins=e_bins, label1='DagOpenMC', label2='OpenMC',
         figname='n_flux.png', figtitle="Compare of DagOpenMC and OpenMC"):
     """
     Plot the neutron flux for a single mesh element.
     """
     ax1 = plt.subplot(211)
     plt.title(figtitle)
-    plt.step(e_bins, n_flux1, label=label1, where='mid', color='r')
-    plt.step(e_bins, n_flux2, label=label2, where='mid', color='g')
+    plt.step(x_bins, n_flux1, label=label1, where='mid', color='r')
+    plt.step(x_bins, n_flux2, label=label2, where='mid', color='g')
     ax1.set_xscale('log')
     ax1.set_yscale('log')
     ax1.set_ylabel('neutron flux ')
     plt.legend()
     ax2 = plt.subplot(212, sharex=ax1)
-    plt.step(e_bins, np.divide(n_flux1-n_flux2, n_flux2),
+    plt.step(x_bins, np.divide(n_flux1-n_flux2, n_flux2),
             label=''.join([label1, '/', label2]), color='orange')
     ax2.set_xscale('log')
     ax2.set_yscale('linear')
@@ -101,22 +101,11 @@ def treat_n_flux(n_flux):
                 n_flux[v][e] = 0.0
     return n_flux
 
-if __name__ == '__main__':
-    num_e_groups = 175
-    num_ves = 80
-    # read dagopenmc sp
-    dagopenmc_sp_filename = os.path.join(os.getcwd(), "dagopenmc_run", "statepoint.5.h5")
-    sp_dagopenmc = openmc.StatePoint(dagopenmc_sp_filename)
-    tally_dagopenmc = sp_dagopenmc.get_tally(scores=['flux'])
-    n_flux_dagopenmc = np.reshape(tally_dagopenmc.mean[:], newshape=(num_e_groups, num_ves)).transpose()
-    n_flux_dagopenmc = treat_n_flux(n_flux_dagopenmc)
-    # read openmc sp, reference.
-    openmc_sp_filename = os.path.join(os.getcwd(), "openmc_run", "statepoint.5.h5")
-    sp_openmc = openmc.StatePoint(openmc_sp_filename)
-    tally_openmc = sp_openmc.get_tally(scores=['flux'])
-    n_flux_openmc = np.reshape(tally_openmc.mean[:], newshape=(num_e_groups, num_ves)).transpose()
-    n_flux_openmc = treat_n_flux(n_flux_openmc)
-    # compare 
+def n_flux_difference_analysis(n_flux1, n_flux2):
+    """
+    n_flux1 is the dagopenmc,
+    n_flux2 is the openmc
+    """
     # draw flux compare of first and last mesh element
     for i in range(num_ves):
         figname = ''.join(["n_flux_m", str(i), ".png"])
@@ -133,6 +122,30 @@ if __name__ == '__main__':
     histogram_indicator(similarities, label='Cosine similarity')
     histogram_indicator(mse, label='Mesn squared error', figname="mse.png")
 
-    
+
+if __name__ == '__main__':
+    num_e_groups = 175
+    num_ves = 80
+    # read dagopenmc sp
+    dagopenmc_sp_filename = os.path.join(os.getcwd(), "dagopenmc_run", "statepoint.5.h5")
+    sp_dagopenmc = openmc.StatePoint(dagopenmc_sp_filename)
+    tally_dagopenmc = sp_dagopenmc.get_tally(scores=['flux'])
+    n_flux_dagopenmc = np.reshape(tally_dagopenmc.mean[:], newshape=(num_e_groups, num_ves)).transpose()
+    n_flux_dagopenmc = treat_n_flux(n_flux_dagopenmc)
+    # read openmc sp, reference.
+    openmc_sp_filename = os.path.join(os.getcwd(), "openmc_run", "statepoint.5.h5")
+    sp_openmc = openmc.StatePoint(openmc_sp_filename)
+    tally_openmc = sp_openmc.get_tally(scores=['flux'])
+    n_flux_openmc = np.reshape(tally_openmc.mean[:], newshape=(num_e_groups, num_ves)).transpose()
+    n_flux_openmc = treat_n_flux(n_flux_openmc)
+    # compare n_flux
+    #n_flux_difference_analysis(n_flux_dagopenmc, n_flux_openmc)
+    # compare n_flux_total
+    n_flux_total_dagopenmc = np.sum(n_flux_dagopenmc, axis=1)
+    n_flux_total_openmc = np.sum(n_flux_openmc, axis=1)
+    plot_n_flux(n_flux_total_dagopenmc, n_flux_total_openmc, x_bins=np.array(range(0, 80)),
+        figname="n_flux_total.png", figtitle="Total neutron flux comparision")
+
+     
     
 

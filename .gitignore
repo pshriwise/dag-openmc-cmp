@@ -2,7 +2,7 @@ __pycache__
 *.h5
 *.xml
 *.out
-n_flux_m*
+n_flux_*
 mse.png
 similarity.png
 *~
