@@ -14,7 +14,7 @@ def create_openmc_geom():
     air = openmc.Material(name="air")
     air.add_element('C', 0.000124, 'wo')
     air.add_element('N', 0.755268, 'wo')
-    air.add_nuclide('O16', 0.231781, 'wo')
+    air.add_element('O', 0.231781, 'wo')
     air.add_element('Ar', 0.012827, 'wo')
     air.set_density('g/cc', 0.001205)
 
