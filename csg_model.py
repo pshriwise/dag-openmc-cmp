@@ -90,8 +90,8 @@ def create_openmc_geom():
     outer_box_prism = openmc.get_rectangular_prism(width=110.0,
                                                    height=110.0,
                                                    boundary_type='vacuum')
-    outer_box_zneg = openmc.ZPlane(z0=-50.0, boundary_type='vacuum')
-    outer_box_zpos = openmc.ZPlane(z0=50.0, boundary_type='vacuum')
+    outer_box_zneg = openmc.ZPlane(z0=-55.0, boundary_type='vacuum')
+    outer_box_zpos = openmc.ZPlane(z0=55.0, boundary_type='vacuum')
 
     inner_box_region = inner_box_prism & +inner_box_zneg & -inner_box_zpos
     outer_box_region = outer_box_prism & +outer_box_zneg & -outer_box_zpos
