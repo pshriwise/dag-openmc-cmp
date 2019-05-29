@@ -15,9 +15,10 @@ def main(geom_type, run=False, plot=False):
     # settings
     model.settings.batches = 5
     model.settings.inactive = 0
-    model.settings.particles = 100000 # particle per batch
+    model.settings.particles = 1000000 # particle per batch
     model.settings.run_mode = 'fixed source'
     model.settings.output = {'tallies':True, 'summary':True}
+    model.settings.survival_biasing = True
 
     # source, 14MeV at (-30, 0, 0), isotropic
     source = openmc.Source()
