@@ -44,12 +44,12 @@ e_bins =np.array(
          1.10517E+001, 1.16183E+001, 1.22140E+001, 1.25232E+001, 1.28403E+001,
          1.34986E+001, 1.38403E+001, 1.41907E+001, 1.45499E+001, 1.49182E+001,
          1.56831E+001, 1.64872E+001, 1.69046E+001, 1.73325E+001, 1.96403E+001])
- 
- 
+
+
 def square_rooted(x):
- 
+
     return sqrt(sum([a*a for a in x]))
- 
+
 def cosine_similarity(x,y):
     numerator = sum(a*b for a,b in zip(x,y))
     denominator = square_rooted(x)*square_rooted(y)
@@ -122,9 +122,9 @@ def n_flux_difference_analysis(n_flux1, n_flux2, item='flux'):
             similarities[i] = cosine_similarity(n_flux1[i],
                     n_flux2[i])
             mse[i] = mean_squared_error(n_flux1[i], n_flux2[i])
-        # 
+        #
         histogram_indicator(similarities, label='Cosine similarity')
-        histogram_indicator(mse, label='Mesn squared error', figname="mse.png")
+        histogram_indicator(mse, label='Mean squared error', figname="mse.png")
 
 
 def get_flux_error_from_sp(filename, num_e_groups, num_ves):
@@ -157,7 +157,3 @@ if __name__ == '__main__':
     n_flux_total_openmc = np.sum(n_flux_openmc, axis=1)
     plot_n_flux(n_flux_total_dagopenmc, n_flux_total_openmc, x_bins=np.array(range(0, 80)),
         figname="n_flux_total.png", figtitle="Total neutron flux comparision")
-
-     
-    
-
