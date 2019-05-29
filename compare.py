@@ -76,12 +76,18 @@ def plot_n_flux(n_flux1, n_flux2, x_bins=e_bins, label1='DagOpenMC', label2='Ope
     ax1.set_ylabel('neutron flux ')
     plt.legend()
     ax2 = plt.subplot(212, sharex=ax1)
-    plt.step(x_bins, np.divide(n_flux1-n_flux2, n_flux2),
-            label=''.join([label1, '/', label2]), color='orange')
+    # calculate diff
+    n_div = np.divide(n_flux1-n_flux2, n_flux2)
+    for i in range(len(n_div)):
+        # treat the nan and decimal error
+        if abs(n_div[i]) < 1e-9 or isnan(n_div[i]):
+            n_div[i] = 0.0
+    plt.step(x_bins, n_div,
+            label=''.join(['(', label1, '-', label2, ')/', label2]), color='orange')
     ax2.set_xscale('log')
     ax2.set_yscale('linear')
     ax2.set_xlabel('Energy (MeV)')
-    ax2.set_ylabel('DagOpenMC/OpenMC')
+    ax2.set_ylabel('(DagOpenMC-OpenMC)/OpenMC')
     plt.legend()
     plt.savefig(figname, dpi=300)
     plt.close()
@@ -149,9 +155,11 @@ if __name__ == '__main__':
     # read openmc sp, reference.
     openmc_sp_filename = os.path.join(os.getcwd(), "openmc_run", "statepoint.5.h5")
     n_flux_openmc, n_flux_rel_err_openmc = get_flux_error_from_sp(openmc_sp_filename, num_e_groups, num_ves)
+
     # compare n_flux
     n_flux_difference_analysis(n_flux_dagopenmc, n_flux_openmc)
     n_flux_difference_analysis(n_flux_rel_err_dagopenmc, n_flux_rel_err_openmc, item='flux_rel_err')
+
     # compare n_flux_total
     n_flux_total_dagopenmc = np.sum(n_flux_dagopenmc, axis=1)
     n_flux_total_openmc = np.sum(n_flux_openmc, axis=1)
