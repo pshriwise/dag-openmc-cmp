@@ -41,7 +41,10 @@ def main(geom_type, run=False, plot=False):
         lower_left = (-55.0, -55.0, -55.0)
         upper_right = (55.0, 55.0, 55.0)
         cells = geom.root_universe.cells
-        vol_calc = openmc.VolumeCalculation([cells[1]], 10000000, lower_left, upper_right)
+        cell_vol = []
+        for idx, cell in cells.items():
+            cell_vol.append(cell)
+        vol_calc = openmc.VolumeCalculation(cell_vol, 10000000, lower_left, upper_right)
         model.settings.volume_calculations = [vol_calc]
 
     model.settings.export_to_xml(path='settings.xml')
