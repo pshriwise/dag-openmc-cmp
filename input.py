@@ -40,10 +40,13 @@ def main(geom_type, run=False, plot=False):
     if model.settings.run_mode == 'volume':
         lower_left = (-55.0, -55.0, -55.0)
         upper_right = (55.0, 55.0, 55.0)
-        cells = geom.root_universe.cells
-        cell_vol = []
-        for idx, cell in cells.items():
-            cell_vol.append(cell)
+        if geom_type == 'csg':
+            cells = geom.root_universe.cells
+            cell_vol = []
+            for idx, cell in cells.items():
+                cell_vol.append(cell)
+        else:
+            cell_vol = [3, 5, 7, 9, 11, 17]
         vol_calc = openmc.VolumeCalculation(cell_vol, 10000000, lower_left, upper_right)
         model.settings.volume_calculations = [vol_calc]
 
