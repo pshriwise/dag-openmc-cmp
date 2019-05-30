@@ -21,6 +21,7 @@ def main(geom_type, run=False, plot=False):
     model.settings.output = {'tallies':True, 'summary':True}
     model.settings.survival_biasing = True
 
+
     # source, 14MeV at (-30, 0, 0), isotropic
     source = openmc.Source()
     source.space = Point(xyz=(-30.0, 0.0, 0.0))
@@ -34,6 +35,14 @@ def main(geom_type, run=False, plot=False):
         geom, mats = create_openmc_geom()
         geom.export_to_xml()
         mats.export_to_xml()
+
+    # stochastic volume calculation
+    if model.settings.run_mode == 'volume':
+        lower_left = (-55.0, -55.0, -55.0)
+        upper_right = (55.0, 55.0, 55.0)
+        cells = geom.root_universe.cells
+        vol_calc = openmc.VolumeCalculation([cells[1]], 10000000, lower_left, upper_right)
+        model.settings.volume_calculations = [vol_calc]
 
     model.settings.export_to_xml(path='settings.xml')
 
@@ -93,14 +102,7 @@ def main(geom_type, run=False, plot=False):
     tallies.append(tally)
     tallies.export_to_xml()
 
-    # stochastic volume calculation
-    if model.settings.run_mode == 'volume':
-        lower_left = (-55.0, -55.0, -55.0)
-        upper_right = (55.0, 55.0, 55.0)
-        cells = geom.root_universe.cells
-        vol_calc = openmc.VolumeCalculation([cells[1]], 10000000, lower_left, upper_right)
-        model.settings.volume_calculations = [vol_calc]
-        
+       
     # plot 2D slice
     if plot:
         plot1 = openmc.Plot()
