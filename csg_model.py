@@ -6,23 +6,33 @@ import operator
 def create_openmc_geom():
 
     # make materials
-    water = openmc.Material(name="water")
-    water.add_nuclide('H1', 0.111915, 'wo')
-    water.add_nuclide('O16', 0.888085, 'wo')
-    water.set_density('g/cc', 1.0)
+    mats = openmc.Materials()
 
-    air = openmc.Material(name="air")
-    air.add_element('C', 0.000124, 'wo')
-    air.add_element('N', 0.755268, 'wo')
-    air.add_element('O', 0.231781, 'wo')
-    air.add_element('Ar', 0.012827, 'wo')
+    air = openmc.Material(material_id=1, name="air")
+    air.add_nuclide('C12', 1.8145e-02, 'ao')
+    air.add_nuclide('C13', 1.9625e-04, 'ao')
+    air.add_nuclide('N15', 3.4869e-01, 'ao')
+    air.add_nuclide('O17', 9.7798e-03, 'ao')
+    air.add_nuclide('O18', 5.2759e-02, 'ao')
+    air.add_nuclide('Ar36', 1.9030e-03, 'ao')
+    air.add_nuclide('Ar38', 3.5880e-04, 'ao')
+    air.add_nuclide('Ar40', 5.6817e-01, 'ao')
     air.set_density('g/cc', 0.001205)
+    mats.append(air)
 
-    lead = openmc.Material(name="lead")
-    lead.add_element('Pb', 1.0, 'wo')
+    lead = openmc.Material(material_id=2, name="lead")
+    lead.add_nuclide('Pb204', 1.4000e-02, 'ao' )
+    lead.add_nuclide('Pb206', 2.4100e-01, 'ao' )
+    lead.add_nuclide('Pb207', 2.2100e-01, 'ao' )
+    lead.add_nuclide('Pb208', 5.2400e-01, 'ao' )
     lead.set_density('g/cc', 11.35)
+    mats.append(lead)
 
-    mats = openmc.Materials([water, air, lead])
+    water = openmc.Material(material_id=3, name="water")
+    water.add_nuclide('H1', 2.0, 'ao')
+    water.add_nuclide('O16', 1.0, 'ao')
+    water.set_density('g/cc', 1.0)
+    mats.append(water)
 
     # bounding region
     xy_bounds = openmc.get_rectangular_prism(width=80.0,
