@@ -8,16 +8,15 @@ from openmc.stats import Point
 
 from csg_model import create_openmc_geom
 
-def main(geom_type, run=False, plot=False):
+def main(geom_type, nps, run=False, plot=False, vol_calc=False):
     #
     model = openmc.model.Model()
 
     # settings
     model.settings.batches = 5
     model.settings.inactive = 0
-    model.settings.particles = 1000000 # particle per batch
-#    model.settings.run_mode = 'fixed source'
-    model.settings.run_mode = 'volume'
+    model.settings.particles = nps # particle per batch
+    model.settings.run_mode = 'fixed source'
     model.settings.output = {'tallies':True, 'summary':True}
     model.settings.survival_biasing = True
 
@@ -28,27 +27,23 @@ def main(geom_type, run=False, plot=False):
     source.energy = openmc.stats.Discrete([14.0*1e6], [1.0])
     model.settings.source = source
 
+    geom, mats = create_openmc_geom()
+
     if geom_type == 'dagmc':
         # set model.settings.dagmc to be true, the default 'dagmc.h5m' will be used
         model.settings.dagmc = True
     elif geom_type == 'csg':
-        geom, mats = create_openmc_geom()
         geom.export_to_xml()
         mats.export_to_xml()
 
     # stochastic volume calculation
-    if model.settings.run_mode == 'volume':
+    if vol_calc:
+        model.settings.run_mode = 'volume'
         lower_left = (-55.0, -55.0, -55.0)
         upper_right = (55.0, 55.0, 55.0)
-        if geom_type == 'csg':
-            cells = geom.root_universe.cells
-            cell_vol = []
-            for idx, cell in cells.items():
-                cell_vol.append(cell)
-        else:
-            cell_vol = [3, 5, 7, 9, 11, 17]
-        vol_calc = openmc.VolumeCalculation(cell_vol, 10000000, lower_left, upper_right)
-        model.settings.volume_calculations = [vol_calc]
+        cells = [ cell for cell in geom.root_universe.cells.values() ]
+        volume_calc = openmc.VolumeCalculation(cells, 10000000, lower_left, upper_right)
+        model.settings.volume_calculations = [volume_calc]
 
     model.settings.export_to_xml(path='settings.xml')
 
@@ -108,7 +103,7 @@ def main(geom_type, run=False, plot=False):
     tallies.append(tally)
     tallies.export_to_xml()
 
-       
+
     # plot 2D slice
     if plot:
         plot1 = openmc.Plot()
@@ -142,10 +137,15 @@ if __name__ == "__main__":
     ap.add_argument('-r', '--run', default=False, action='store_true',
                     help="If present, run OpenMC after creating the model")
 
+    ap.add_argument('-n', '--nps', type=int, default=10000,
+                    help="Number of particles per batch (5 batches)")
+
+    ap.add_argument('-v', '--vol', default=False, action="store_true",
+                     help="Perform a volume calculation")
 
     ap.add_argument('-p', '--plot', default=False, action="store_true",
                      help="Plot the 2D slice of geometry")
 
     args = ap.parse_args()
 
-    main(args.geom, args.run, args.plot)
+    main(args.geom, args.nps, args.run, args.plot, args.vol)
