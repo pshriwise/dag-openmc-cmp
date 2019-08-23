@@ -28,12 +28,9 @@ def main(geom_type, nps, run=False, plot=False, vol_calc=False):
     model.settings.source = source
 
     # choose geometry and material file to use
-    dag_file = os.path.join(os.path.expanduser("~"), "opt", "dag-openmc-cmp",
-            "FNG", "geometry", "dagopenmc", "dagmc.h5m")
-    geom_file = os.path.join(os.path.expanduser("~"), "opt", "dag-openmc-cmp",
-        "FNG", "geometry", "openmc", "geometry.xml")
-    mat_file = os.path.join(os.path.expanduser("~"), "opt", "dag-openmc-cmp",
-        "FNG", "geometry", "openmc", "materials.xml")
+    dag_file = os.path.join(os.getcwd(),"..", "geometry", "dagopenmc", "dagmc.h5m")
+    geom_file = os.path.join(os.getcwd(), "..", "geometry", "openmc", "geometry.xml")
+    mat_file = os.path.join(os.getcwd(), "..", "geometry", "openmc", "materials.xml")
     if geom_type == 'dagmc':
         # set model.settings.dagmc to be true, the default 'dagmc.h5m' will be used
         model.settings.dagmc = True
