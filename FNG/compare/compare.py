@@ -43,6 +43,44 @@ e_bins =np.array(
          1.34986E+001, 1.38403E+001, 1.41907E+001, 1.45499E+001, 1.49182E+001,
          1.56831E+001, 1.64872E+001, 1.69046E+001, 1.73325E+001, 1.96403E+001])
 
+def histogram_indicator(indicator, label='', figname="similarity.png"):
+    plt.hist(indicator, bins=20)
+    plt.xlabel(label)
+    plt.savefig(figname, dpi=300)
+    plt.close()
+
+def n_flux_difference_analysis(n_flux1, n_flux2):
+    """
+    n_flux1 is the openmc
+    n_flux2 is the dagopenmc,
+    item could be 'flux' or 'flux_rel_err'
+    """
+    # calculate cosine similarity for each volume element
+    similarities = np.zeros(num_ves)
+    mse = np.zeros(num_ves)
+    for i in range(num_ves):
+        similarities[i] = cosine_similarity(n_flux1[i],
+                n_flux2[i])
+        mse[i] = mean_squared_error(n_flux1[i], n_flux2[i])
+    histogram_indicator(similarities, label='Cosine similarity')
+    histogram_indicator(mse, label='Mean squared error', figname="mse.png")
+
+def square_rooted(x):
+
+    return sqrt(sum([a*a for a in x]))
+
+def cosine_similarity(x,y):
+    numerator = sum(a*b for a,b in zip(x,y))
+    denominator = square_rooted(x)*square_rooted(y)
+    return numerator/float(denominator)
+
+def mean_squared_error(x, y):
+    if len(x) != len(y):
+        raise ValueError("arrays have different length")
+    numerator = sum((a-b)*(a-b) for a, b in zip(x, y))
+    denominator = len(x)
+    return numerator/denominator
+
 def plot_n_flux(n_flux1, n_flux2, x_bins=e_bins, label1='DagOpenMC', label2='OpenMC',
         figname='n_flux.png', figtitle="Compare of DagOpenMC and OpenMC"):
     """
@@ -132,3 +170,5 @@ if __name__ == "__main__":
         plot_n_flux(openmc_flux, dagopenmc_flux, x_bins=e_bins, label1='OpenMC', label2='DagOpenMC',
              figname=figname, figtitle="Compare of DagOpenMC and OpenMC")
     
+    # analysis the difference
+    n_flux_difference_analysis(results[0], results[1])
