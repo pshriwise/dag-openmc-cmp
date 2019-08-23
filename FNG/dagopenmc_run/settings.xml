@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<settings>
+  <run_mode>fixed source</run_mode>
+  <particles>20000000</particles>
+  <batches>5</batches>
+  <inactive>0</inactive>
+  <source strength="1.0">
+    <space type="box">
+      <parameters>-49.5 5.6 -49.2 49.5 77.43 49.2</parameters>
+    </space>
+    <energy type="discrete">
+      <parameters>14000000.0 1.0</parameters>
+    </energy>
+  </source>
+  <output>
+    <tallies>true</tallies>
+    <summary>true</summary>
+  </output>
+  <survival_biasing>true</survival_biasing>
+  <dagmc>true</dagmc>
+</settings>

@@ -1,0 +1,34 @@
+mcnp_n_adapted.inp - Copied the SINBAD input file and commented out 2 volumes
+that were void space (cells 229 and 241).
+
+mcnp_n_adapted.sat - MCNP2CAD of mcnp_n_adapted.inp. Used Cubit to look at all volumes that are unassigned. Reassigned volumes according to MCNP input file.
+MCNP mat 1, cubit group 3:
+    MCNP_ID_240 -> cubit vols 151 152
+MCNP mat 10, cubit group 2:
+    MCNP_ID_178 -> cubit vols 131 132
+    MCNP_ID_238 -> cubit vols 149 150
+MCNP mat 4, cubit group 6
+    MCNP_ID_52 -> cubit vols 54 55
+    MCNP_ID_21 -> cubit vols 22 23
+
+mcnp_n_adapted.h5m - dagmc_preproc of mcnp_n_adapted.sat
+
+mcnp_n_adapted_zip.h5m - make_watertight of mcnp_n_adapted.sat
+
+mcnp_n_adapted_dag.inp - DAG-MCNP version of the input file. Only data cards. No sdef.
+"idum 2" was added to use the neutron source.F90. The Cubit volume of the source cell is 2.
+In addition the follwing subsititions are made in order to use FENDL2.1 data:
+15000 -> 15031
+41000 -> 41093
+6000  ->  6012
+42000 -> Use the following script
+######
+from pyne.nucname import id
+from pyne.data import natural_abund
+total = -2.00
+for x in [42092, 42094, 42095, 42096, 42097, 42098, 42100]:
+    print("{}.21c {}".format(x, total*natural_abund(id(x))))
+######
+
+
+neutron_source.F90 - from CAE: /filespace/groups/cnerg/users/stuart/software/fusion-n-tools/FNG_Source/source.F90

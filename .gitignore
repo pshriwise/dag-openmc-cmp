@@ -5,4 +5,12 @@ __pycache__
 n_flux_*
 mse.png
 similarity.png
+*.err
 *~
+
+# exception
+!FNG/geometry/openmc/*.xml
+!FNG/openmc_run/*.xml
+!FNG/dagopenmc_run/*.xml
+!FNG/*openmc_run/*.h5
+!FNG/*openmc_run/job*
