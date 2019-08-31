@@ -112,7 +112,7 @@ def plot_n_flux(n_flux1, n_flux2, x_bins=e_bins, label1='DagOpenMC', label2='Ope
     plt.close()
 
 def get_filename_from_case(case):
-    filename = os.path.join(os.getcwd(), '..', ''.join([case, '_run']), ''.join(['statepoint.5.fng.', case, '.h5']))
+    filename = os.path.join(os.getcwd(), '..', ''.join([case, '_run']), ''.join(['statepoint.5.fng.', case, '.1e8.h5']))
     return filename
 
 def get_tally_results(filename, tally_id=1):

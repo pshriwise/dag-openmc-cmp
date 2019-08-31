@@ -7,6 +7,7 @@ mse.png
 similarity.png
 *.err
 *~
+FNG/compare/*.png
 
 # exception
 !FNG/geometry/openmc/*.xml
