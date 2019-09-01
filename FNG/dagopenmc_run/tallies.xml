@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <tallies>
   <!--n_flux-->
-  <mesh id="1" type="regular">
+  <mesh id="1">
     <dimension>10 10 10</dimension>
     <lower_left>-49.5 5.6 -49.2</lower_left>
     <upper_right>49.5 77.43 49.2</upper_right>
