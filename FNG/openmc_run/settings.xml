@@ -16,5 +16,8 @@
     <tallies>true</tallies>
     <summary>true</summary>
   </output>
+  <source_point>
+    <write>false</write>
+  </source_point>
   <survival_biasing>true</survival_biasing>
 </settings>

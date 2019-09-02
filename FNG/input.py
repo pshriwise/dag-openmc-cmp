@@ -19,6 +19,7 @@ def main(geom_type, nps, run=False, plot=False, vol_calc=False):
     model.settings.run_mode = 'fixed source'
     model.settings.output = {'tallies':True, 'summary':True}
     model.settings.survival_biasing = True
+    model.settings.sourcepoint = {'write':False}
 
 
     # iso-mesh source covers the geometry
