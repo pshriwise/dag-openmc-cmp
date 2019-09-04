@@ -8,6 +8,8 @@ similarity.png
 *.err
 *~
 FNG/compare/*.png
+FNG/geometry/dagopenmc/*.h5m
+FNG/geometry/dagopenmc/*.trelis
 
 # exception
 !FNG/geometry/openmc/*.xml
