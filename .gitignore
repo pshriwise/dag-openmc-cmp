@@ -1,5 +1,6 @@
 __pycache__
 *.h5
+*.h5m
 *.xml
 *.out
 n_flux_*
