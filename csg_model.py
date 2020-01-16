@@ -35,8 +35,8 @@ def create_openmc_geom():
     mats.append(water)
 
     # bounding region
-    xy_bounds = openmc.get_rectangular_prism(width=80.0,
-                                             height=25.0)
+    xy_bounds = openmc.rectangular_prism(width=80.0,
+                                         height=25.0)
     zneg_bound = openmc.ZPlane(z0=-2.5)
     zpos_bound = openmc.ZPlane(z0=2.5)
 
@@ -92,14 +92,14 @@ def create_openmc_geom():
     cells.append(beamline)
 
     # external water vol
-    inner_box_prism = openmc.get_rectangular_prism(width=100.0,
-                                                   height=100.0)
+    inner_box_prism = openmc.rectangular_prism(width=100.0,
+                                               height=100.0)
     inner_box_zneg = openmc.ZPlane(z0=-50.0)
     inner_box_zpos = openmc.ZPlane(z0=50.0)
 
-    outer_box_prism = openmc.get_rectangular_prism(width=110.0,
-                                                   height=110.0,
-                                                   boundary_type='vacuum')
+    outer_box_prism = openmc.rectangular_prism(width=110.0,
+                                               height=110.0,
+                                               boundary_type='vacuum')
     outer_box_zneg = openmc.ZPlane(z0=-55.0, boundary_type='vacuum')
     outer_box_zpos = openmc.ZPlane(z0=55.0, boundary_type='vacuum')
 

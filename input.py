@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 
 import numpy as np
 import openmc
-import openmc.capi
+import openmc.lib
 from openmc.stats import Point
 
 from csg_model import create_openmc_geom
