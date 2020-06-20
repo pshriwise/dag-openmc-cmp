@@ -43,9 +43,11 @@ e_bins =np.array(
          1.34986E+001, 1.38403E+001, 1.41907E+001, 1.45499E+001, 1.49182E+001,
          1.56831E+001, 1.64872E+001, 1.69046E+001, 1.73325E+001, 1.96403E+001])
 
-def histogram_indicator(indicator, label='', figname="similarity.png"):
+def histogram_indicator(indicator, title, label='', figname="similarity.png"):
     plt.hist(indicator, bins=20)
     plt.xlabel(label)
+    plt.ylabel("Number of Mesh Voxels")
+    plt.title(title)
     plt.savefig(figname, dpi=300)
     plt.close()
 
@@ -62,8 +64,8 @@ def n_flux_difference_analysis(n_flux1, n_flux2):
         similarities[i] = cosine_similarity(n_flux1[i],
                 n_flux2[i])
         mse[i] = mean_squared_error(n_flux1[i], n_flux2[i])
-    histogram_indicator(similarities, label='Cosine similarity')
-    histogram_indicator(mse, label='Mean squared error', figname="mse.png")
+    histogram_indicator(similarities, "CSG to DAGMC Geometry Comparison - FNG", label='Cosine similarity')
+    histogram_indicator(mse, "CSG to DAGMC Geometry Comparison - FNG", label='Mean squared error', figname="mse.png")
 
 def square_rooted(x):
 
@@ -81,18 +83,19 @@ def mean_squared_error(x, y):
     denominator = len(x)
     return numerator/denominator
 
-def plot_n_flux(n_flux1, n_flux2, x_bins=e_bins, label1='DagOpenMC', label2='OpenMC',
-        figname='n_flux.png', figtitle="Compare of DagOpenMC and OpenMC"):
+def plot_n_flux(n_flux1, n_flux2, x_bins=e_bins, label1='DAGOpenMC', label2='OpenMC',
+        figname='n_flux.png', figtitle="Compare of DAGOpenMC and OpenMC"):
     """
     Plot the neutron flux for a single mesh element.
     """
     ax1 = plt.subplot(211)
     plt.title(figtitle)
     plt.step(x_bins, n_flux1, label=label1, where='mid', color='r')
-    plt.step(x_bins, n_flux2, label=label2, where='mid', color='g')
+    plt.step(x_bins, n_flux2, label=label2, where='mid', color='black', linestyle=':')
     ax1.set_xscale('log')
     ax1.set_yscale('log')
-    ax1.set_ylabel('neutron flux ')
+    ax1.set_ylabel(r'Flux ($\frac{particle-cm}{source particle})$')
+#    ax1.set_ylabel('neutron flux ')
     plt.legend()
     ax2 = plt.subplot(212, sharex=ax1)
     # calculate diff
@@ -101,18 +104,19 @@ def plot_n_flux(n_flux1, n_flux2, x_bins=e_bins, label1='DagOpenMC', label2='Ope
         # treat the nan and decimal error
         if abs(n_div[i]) < 1e-9 or isnan(n_div[i]):
             n_div[i] = 0.0
-    plt.step(x_bins, n_div,
-            label=''.join(['(', label1, '-', label2, ')/', label2]), color='orange')
+    n_div *= 100.0
+    plt.step(x_bins, n_div, color='black')
+#            label=''.join(['(', label1, '-', label2, ')/', label2]), color='orange')
     ax2.set_xscale('log')
     ax2.set_yscale('linear')
     ax2.set_xlabel('Energy (MeV)')
-    ax2.set_ylabel('(DagOpenMC-OpenMC)/OpenMC')
-    plt.legend()
+    ax2.set_ylabel('Relative Difference (%)')
+#    plt.legend()
     plt.savefig(figname, dpi=300)
     plt.close()
 
 def get_filename_from_case(case):
-    filename = os.path.join(os.getcwd(), '..', ''.join([case, '_run']), ''.join(['statepoint.5.fng.', case, '.1e9.h5']))
+    filename = os.path.join(os.getcwd(), '..', ''.join([case, '_run']), ''.join(['statepoint.500.h5']))
     return filename
 
 def get_tally_results(filename, tally_id=1):
@@ -133,42 +137,99 @@ def get_flux_res_rel_err(tally, num_ves, num_e_groups, vol):
     nonzero = flux.mean > 0
     rel_err[nonzero] = flux.std_dev[nonzero] / flux.mean[nonzero]
 
+    std_dev = np.zeros_like(flux.std_dev)
+    std_dev[nonzero] = flux.std_dev[nonzero]
+    std_dev = np.divide(std_dev, vol)
+    std_dev = np.reshape(std_dev, newshape=(num_e_groups, num_ves))
+    std_dev = std_dev.transpose()
+
     res = np.divide(res, vol)
     res = np.reshape(res, newshape=(num_e_groups, num_ves))
     res = res.transpose()
 
     rel_err = np.reshape(rel_err, newshape=(num_e_groups, num_ves))
+    rel_err = np.divide(rel_err, vol)
     rel_err = rel_err.transpose()
-    return res, rel_err
+    return res, rel_err, std_dev
 
 def get_res_rel_err_from_file(case, tally_id, num_ves, num_e_groups, vol):
     filename = get_filename_from_case(case)
     tally = get_tally_results(filename, tally_id=tally_id)
-    res, rel_err = get_flux_res_rel_err(tally, num_ves, num_e_groups, vol)
-    return res, rel_err
+    res, rel_err, std_dev = get_flux_res_rel_err(tally, num_ves, num_e_groups, vol)
+    return res, rel_err, std_dev
+
+def plot_new(flux,
+             std_dev,
+             dag_flux,
+             dag_std_dev,
+             figname='test.png'):
+
+    ax1 = plt.subplot(211)
+    ax2 = plt.subplot(212, sharex=ax1)
+
+    legend_props = {'size' : 6}
+
+    # Plot the spectra
+    ax1.set_title("Mesh Voxel Spectrum Comparison - FNG")
+    ax1.step(e_bins, flux, color='red', label='OpenMC')
+    ax1.step(e_bins, dag_flux, color='blue', linestyle=':', label='DAG-OpenMC')
+    ax1.set_xscale('log')
+    ax1.set_yscale('log')
+    ax1.set_ylabel(r'Flux ($\frac{particle-cm}{source particle})$')
+    ax1.legend(prop=legend_props, frameon=False)
+
+    # compute the error of the relative difference
+    nonzero = flux != 0
+    err_bound = np.sqrt(std_dev**2 + dag_std_dev**2)
+    err_bound[nonzero] /= flux[nonzero]
+    err_bound *= 100.0
+
+    rel_diff = (dag_flux - flux)
+    rel_diff[nonzero] /= flux[nonzero]
+    rel_diff *= 100.0
+
+    ax2.step(e_bins, 2 * err_bound, color='black', linestyle=':', label='+/- 2 Std. Dev.')
+    ax2.step(e_bins, -2 * err_bound, color='black',linestyle=':')
+    ax2.step(e_bins, rel_diff, color='green')
+    ax2.set_ylabel('Relative Difference (%)')
+    ax2.set_xlabel('Energy (MeV)')
+    ax2.legend(prop=legend_props, frameon=False)
+
+    plt.savefig(figname, dpi=300)
+    plt.close()
 
 if __name__ == "__main__":
     cases = ['openmc', 'dagopenmc']
     results = []
     rel_errs = []
+    std_devs = []
     sp_files = []
     num_ves = 1000
     num_e_groups = 175
     tally_id = 1
     # volume of each voxel
-    vol = (49.5 * 2) * (77.43-5.6) * (49.2 * 2) / 1000.0
+    vol = 1.0 # (49.5 * 2) * (77.43-5.6) * (49.2 * 2) / 1000.0
     for case in cases:
-        res, rel_err = get_res_rel_err_from_file(case, tally_id, num_ves, num_e_groups, vol)
+        res, rel_err, std_dev = get_res_rel_err_from_file(case, tally_id, num_ves, num_e_groups, vol)
         results.append(res)
+        std_devs.append(std_dev)
         rel_errs.append(rel_err)
-        
+
     # compare the n_flux of each voxel
-    for i in range(num_ves):
+    for i in range(10):
         openmc_flux = results[0][i]
         dagopenmc_flux = results[1][i]
+        openmc_std_dev = std_devs[0][i]
+        dagopenmc_std_dev = std_devs[1][i]
         figname = ''.join(['neutron flux of mesh ', str(i), '.png'])
-        plot_n_flux(openmc_flux, dagopenmc_flux, x_bins=e_bins, label1='OpenMC', label2='DagOpenMC',
-             figname=figname, figtitle="Compare of DagOpenMC and OpenMC")
-    
+        # plot_n_flux(openmc_flux, dagopenmc_flux, x_bins=e_bins, label1='OpenMC', label2='DAGOpenMC',
+        #      figname=figname, figtitle="Comparison of DAGOpenMC and OpenMC")
+
+        plot_new(openmc_flux,
+                 openmc_std_dev,
+                 dagopenmc_flux,
+                 dagopenmc_std_dev,
+                 figname=figname)
+
     # analysis the difference
     n_flux_difference_analysis(results[0], results[1])
