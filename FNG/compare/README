@@ -1,0 +1,3 @@
+20190831 DagOpenMC and OpenMC compare, nps 1e8, very large difference observed, especially for low energy zone.
+20190904 DagOpenMC and OpenMC compare, nps 1e9. Large difference still here, not much improvement.
+20190904 Decide to add the results of DAG-MCNP in the comparison, make sure the geometry is correct.

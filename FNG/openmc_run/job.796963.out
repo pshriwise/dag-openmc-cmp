@@ -1,0 +1,123 @@
+                                %%%%%%%%%%%%%%%
+                           %%%%%%%%%%%%%%%%%%%%%%%%
+                        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                                    %%%%%%%%%%%%%%%%%%%%%%%%
+                                     %%%%%%%%%%%%%%%%%%%%%%%%
+                 ###############      %%%%%%%%%%%%%%%%%%%%%%%%
+                ##################     %%%%%%%%%%%%%%%%%%%%%%%
+                ###################     %%%%%%%%%%%%%%%%%%%%%%%
+                ####################     %%%%%%%%%%%%%%%%%%%%%%
+                #####################     %%%%%%%%%%%%%%%%%%%%%
+                ######################     %%%%%%%%%%%%%%%%%%%%
+                #######################     %%%%%%%%%%%%%%%%%%
+                 #######################     %%%%%%%%%%%%%%%%%
+                 ######################     %%%%%%%%%%%%%%%%%
+                  ####################     %%%%%%%%%%%%%%%%%
+                    #################     %%%%%%%%%%%%%%%%%
+                     ###############     %%%%%%%%%%%%%%%%
+                       ############     %%%%%%%%%%%%%%%
+                          ########     %%%%%%%%%%%%%%
+                                      %%%%%%%%%%%
+
+                   | The OpenMC Monte Carlo Code
+         Copyright | 2011-2019 MIT and OpenMC contributors
+           License | http://openmc.readthedocs.io/en/latest/license.html
+           Version | 0.11.0-dev
+          Git SHA1 | 7cd33eec53318b0ccb161d6f20095a89fd7c62da
+         Date/Time | 2019-08-28 07:32:29
+     MPI Processes | 64
+    OpenMP Threads | 10
+
+ Reading settings XML file...
+ Reading cross sections XML file...
+ Reading materials XML file...
+ Reading geometry XML file...
+ Reading B10 from /home/nu_xzhang/nndc_hdf5/fendl31d-neutron/B10.h5
+ Reading B11 from /home/nu_xzhang/nndc_hdf5/fendl31d-neutron/B11.h5
+ Reading Si28 from /home/nu_xzhang/nndc_hdf5/fendl31d-neutron/Si28.h5
+ Reading Cr50 from /home/nu_xzhang/nndc_hdf5/Cr50.h5
+ Reading Cr52 from /home/nu_xzhang/nndc_hdf5/Cr52.h5
+ Reading Cr53 from /home/nu_xzhang/nndc_hdf5/Cr53.h5
+ Reading Cr54 from /home/nu_xzhang/nndc_hdf5/Cr54.h5
+ Reading Mn55 from /home/nu_xzhang/nndc_hdf5/Mn55.h5
+ Reading Fe54 from /home/nu_xzhang/nndc_hdf5/Fe54.h5
+ Reading Fe56 from /home/nu_xzhang/nndc_hdf5/Fe56.h5
+ Reading Fe57 from /home/nu_xzhang/nndc_hdf5/Fe57.h5
+ Reading Fe58 from /home/nu_xzhang/nndc_hdf5/Fe58.h5
+ Reading Co59 from /home/nu_xzhang/nndc_hdf5/Co59.h5
+ Reading Ni58 from /home/nu_xzhang/nndc_hdf5/Ni58.h5
+ Reading Ni60 from /home/nu_xzhang/nndc_hdf5/Ni60.h5
+ Reading Ni61 from /home/nu_xzhang/nndc_hdf5/Ni61.h5
+ Reading Ni62 from /home/nu_xzhang/nndc_hdf5/Ni62.h5
+ Reading Ni64 from /home/nu_xzhang/nndc_hdf5/Ni64.h5
+ Reading Cu63 from /home/nu_xzhang/nndc_hdf5/Cu63.h5
+ Reading Cu65 from /home/nu_xzhang/nndc_hdf5/Cu65.h5
+ Reading C12 from /home/nu_xzhang/nndc_hdf5/fendl31d-neutron/C12.h5
+ Reading C13 from /home/nu_xzhang/nndc_hdf5/fendl31d-neutron/C13.h5
+ Reading V50 from /home/nu_xzhang/nndc_hdf5/V50.h5
+ Reading V51 from /home/nu_xzhang/nndc_hdf5/V51.h5
+ Reading Mo92 from /home/nu_xzhang/nndc_hdf5/Mo92.h5
+ Reading Mo94 from /home/nu_xzhang/nndc_hdf5/Mo94.h5
+ Reading Mo95 from /home/nu_xzhang/nndc_hdf5/Mo95.h5
+ Reading Mo96 from /home/nu_xzhang/nndc_hdf5/Mo96.h5
+ Reading Mo97 from /home/nu_xzhang/nndc_hdf5/Mo97.h5
+ Reading Mo98 from /home/nu_xzhang/nndc_hdf5/Mo98.h5
+ Reading Mo100 from /home/nu_xzhang/nndc_hdf5/Mo100.h5
+ Reading H1 from /home/nu_xzhang/nndc_hdf5/fendl31d-neutron/H1.h5
+ Reading O16 from /home/nu_xzhang/nndc_hdf5/fendl31d-neutron/O16.h5
+ Reading N14 from /home/nu_xzhang/nndc_hdf5/fendl31d-neutron/N14.h5
+ Reading P31 from /home/nu_xzhang/nndc_hdf5/fendl31d-neutron/P31.h5
+ Reading S32 from /home/nu_xzhang/nndc_hdf5/fendl31d-neutron/S32.h5
+ Reading S33 from /home/nu_xzhang/nndc_hdf5/fendl31d-neutron/S33.h5
+ Reading S34 from /home/nu_xzhang/nndc_hdf5/fendl31d-neutron/S34.h5
+ Reading S36 from /home/nu_xzhang/nndc_hdf5/fendl31d-neutron/S36.h5
+ Reading Sn112 from /home/nu_xzhang/nndc_hdf5/Sn112.h5
+ Reading Sn114 from /home/nu_xzhang/nndc_hdf5/Sn114.h5
+ Reading Sn115 from /home/nu_xzhang/nndc_hdf5/Sn115.h5
+ Reading Sn116 from /home/nu_xzhang/nndc_hdf5/Sn116.h5
+ Reading Sn117 from /home/nu_xzhang/nndc_hdf5/Sn117.h5
+ Reading Sn118 from /home/nu_xzhang/nndc_hdf5/Sn118.h5
+ Reading Sn119 from /home/nu_xzhang/nndc_hdf5/Sn119.h5
+ Reading Sn120 from /home/nu_xzhang/nndc_hdf5/Sn120.h5
+ Reading Sn122 from /home/nu_xzhang/nndc_hdf5/Sn122.h5
+ Reading Sn124 from /home/nu_xzhang/nndc_hdf5/Sn124.h5
+ Reading Pb204 from /home/nu_xzhang/nndc_hdf5/Pb204.h5
+ Reading Pb206 from /home/nu_xzhang/nndc_hdf5/Pb206.h5
+ Reading Pb207 from /home/nu_xzhang/nndc_hdf5/Pb207.h5
+ Reading Pb208 from /home/nu_xzhang/nndc_hdf5/Pb208.h5
+ Reading Nb93 from /home/nu_xzhang/nndc_hdf5/Nb93.h5
+ Maximum neutron transport energy: 20000000.000000 eV for Fe58
+ Minimum neutron data temperature: 300.000000 K
+ Maximum neutron data temperature: 294.000000 K
+ Reading tallies XML file...
+ Writing summary.h5 file...
+ Initializing source particles...
+
+ ===============>     FIXED SOURCE TRANSPORT SIMULATION     <===============
+
+ Simulating batch 1
+ Simulating batch 2
+ Simulating batch 3
+ Simulating batch 4
+ Simulating batch 5
+ Creating state point statepoint.5.h5...
+
+ =======================>     TIMING STATISTICS     <=======================
+
+ Total time for initialization     = 2.6919e+01 seconds
+   Reading cross sections          = 1.3407e+01 seconds
+ Total time in simulation          = 4.7694e+02 seconds
+   Time in transport only          = 4.4249e+02 seconds
+   Time in active batches          = 4.7694e+02 seconds
+   Time accumulating tallies       = 8.3605e+00 seconds
+ Total time for finalization       = 7.2935e-01 seconds
+ Total time elapsed                = 5.0953e+02 seconds
+ Calculation Rate (active)         = 209671. particles/second
+
+ ============================>     RESULTS     <============================
+
+ Leakage Fraction            = 0.54611 +/- 0.00004
+

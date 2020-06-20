@@ -1,8 +1,20 @@
 __pycache__
 *.h5
+*.log
+*.h5m
 *.xml
 *.out
 n_flux_*
 mse.png
 similarity.png
+*.err
 *~
+FNG/compare/*.png
+FNG/geometry/dagopenmc/*.h5m
+FNG/geometry/dagopenmc/*.trelis
+
+# exception
+!FNG/geometry/openmc/*.xml
+!FNG/openmc_run/*.xml
+!FNG/dagopenmc_run/*.xml
+!FNG/*openmc_run/job*
