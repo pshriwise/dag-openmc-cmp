@@ -1,9 +1,13 @@
 #!/usr/bin/python3
 import os
+import sys
+
 import numpy as np
 import openmc
 import matplotlib.pyplot as plt
 from math import*
+
+from argparse import ArgumentParser
 
 
 e_bins =np.array(
@@ -83,15 +87,11 @@ def mean_squared_error(x, y):
     denominator = len(x)
     return numerator/denominator
 
-def get_filename_from_case(case):
-    filename = os.path.join(os.getcwd(), '..', ''.join([case, '_run']), ''.join(['statepoint.500.h5']))
-    return filename
-
-def get_tally_results(filename, tally_id=1):
+def get_tally_results(statepoint_path, tally_id):
     """
     Get tally results.
     """
-    sp = openmc.StatePoint(filename)
+    sp = openmc.StatePoint(statepoint_path)
     tally = sp.get_tally(id=tally_id)
     return tally
 
@@ -135,9 +135,8 @@ def get_flux_res_rel_err(tally):
     rel_err = rel_err.transpose()
     return res, rel_err, std_dev
 
-def get_res_rel_err_from_file(case, tally_id):
-    filename = get_filename_from_case(case)
-    tally = get_tally_results(filename, tally_id=tally_id)
+def get_res_rel_err_from_file(statepoint_path, tally_id):
+    tally = get_tally_results(statepoint_path, tally_id=tally_id)
     res, rel_err, std_dev = get_flux_res_rel_err(tally)
     return res, rel_err, std_dev
 
@@ -183,40 +182,44 @@ def plot_new(model_name,
     plt.savefig(figname, dpi=300)
     plt.close()
 
-if __name__ == "__main__":
-    model_name = "FNG"
-
-    cases = ('openmc', 'dagopenmc')
-    results = []
-    rel_errs = []
-    std_devs = []
-    sp_files = []
-    tally_id = 1
-
+def perform_comparison(model_name, csg_statepoint, dagmc_statepoint, tally_id=1, summary_only=False):
     print("Compiling results...")
 
-    for case in cases:
-        res, rel_err, std_dev = get_res_rel_err_from_file(case, tally_id)
-        results.append(res)
-        std_devs.append(std_dev)
-        rel_errs.append(rel_err)
+    csg_mean, csg_rel_err, csg_std_dev = get_res_rel_err_from_file(csg_statepoint, tally_id)
+
+    dag_mean, dag_rel_err, dag_std_dev = get_res_rel_err_from_file(dagmc_statepoint, tally_id)
 
     print("Generating plots...")
 
-    # compare the n_flux of each voxel
-    for i in range(10):
-        openmc_flux = results[0][i]
-        dagopenmc_flux = results[1][i]
-        openmc_std_dev = std_devs[0][i]
-        dagopenmc_std_dev = std_devs[1][i]
-        figname = ''.join(['neutron flux of mesh ', str(i), '.png'])
 
-        plot_new(model_name,
-                 openmc_flux,
-                 openmc_std_dev,
-                 dagopenmc_flux,
-                 dagopenmc_std_dev,
+    # analyze the difference
+    n_flux_difference_analysis(model_name, csg_mean, dag_mean)
+
+    # compare the n_flux of each voxel
+    for i in range(csg_mean.shape[0]):
+        figname = ''.join(['Neutron flux of mesh voxel', str(i), '.png'])
+        plot_new(args.model_name,
+                 csg_mean[i],
+                 csg_std_dev[i],
+                 dag_mean[i],
+                 dag_std_dev[i],
                  figname=figname)
 
-    # analysis the difference
-    n_flux_difference_analysis(model_name, results[0], results[1])
+
+if __name__ == "__main__":
+    ap = ArgumentParser(description="Comparison Script use of DAGMC geometry "
+                                    "in OpenMC.")
+
+    ap.add_argument("model_name", type=str, help="Name of the model to be used in plot titles")
+    ap.add_argument("csg_statepoint", type=str, help="Path to the statepoint file generated using CSG")
+    ap.add_argument("dagmc_statepoint", type=str, help="Path to the statepoint file generated using DAGMC")
+    ap.add_argument("-tid", "--tally_id", type=int, default=1, help="Tally ID")
+    ap.add_argument("-s", "--summary-only", action='store_true', default=False, help="Generate summary plots only.")
+
+    args = ap.parse_args(sys.argv[1:])
+
+    perform_comparison(args.model_name,
+                       args.csg_statepoint,
+                       args.dagmc_statepoint,
+                       args.tally_id,
+                       args.summary_only)
