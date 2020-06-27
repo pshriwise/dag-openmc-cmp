@@ -8,7 +8,9 @@ from openmc.stats import Point
 
 from csg_model import create_openmc_geom
 
-def main(geom_type, nps, run=False, plot=False, vol_calc=False):
+def create_input(geom_type, batches, nps, plot=False, vol_calc=False):
+    openmc.reset_auto_ids()
+
     #
     model = openmc.model.Model()
 
@@ -116,36 +118,6 @@ def main(geom_type, nps, run=False, plot=False, vol_calc=False):
         plots.append(plot1)
         plots.export_to_xml()
 
-
-    # run the problem
-    #openmc.run(mpi_args=['mpiexec', '-n', '4'])
-    if run:
-        openmc.run()
-
     # plot the 2D slice
     if plot:
         openmc.plot_geometry(output=True, openmc_exec='openmc', cwd='.')
-
-if __name__ == "__main__":
-
-    ap = ArgumentParser("DAG-OpenMC to DAG-MCNP comparison geometry")
-
-    ap.add_argument('-g', '--geom', type=str, default="dagmc",
-                    choices=('dagmc', 'csg'),
-                    help="Geometry type to use")
-
-    ap.add_argument('-r', '--run', default=False, action='store_true',
-                    help="If present, run OpenMC after creating the model")
-
-    ap.add_argument('-n', '--nps', type=int, default=10000,
-                    help="Number of particles per batch (5 batches)")
-
-    ap.add_argument('-v', '--vol', default=False, action="store_true",
-                     help="Perform a volume calculation")
-
-    ap.add_argument('-p', '--plot', default=False, action="store_true",
-                     help="Plot the 2D slice of geometry")
-
-    args = ap.parse_args()
-
-    main(args.geom, args.nps, args.run, args.plot, args.vol)
