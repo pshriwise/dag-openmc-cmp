@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <settings>
   <run_mode>fixed source</run_mode>
-  <particles>200000000</particles>
+  <particles>100</particles>
   <batches>5</batches>
   <inactive>0</inactive>
   <source strength="1.0">
@@ -13,8 +13,8 @@
     </energy>
   </source>
   <output>
-    <tallies>true</tallies>
     <summary>true</summary>
+    <tallies>true</tallies>
   </output>
   <source_point>
     <write>false</write>
