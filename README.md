@@ -10,6 +10,12 @@ For more information about these projects please see:
 
 *NOTE: These models rely OpenMC's ENDFB-VIII.0 data [found here](https://openmc.org/lanl-data-libraries/)*
 
+## Retrieving the DAGMC Models
+
+To run each model they should be downloaded from the following links and placed in their respective folders:
+
+  - [Collimator](https://anl.box.com/shared/static/isn5mn1y5qf2jjwr4ofnrghf11m6ep3r.h5m)
+  - [Frascati Neutron Generator (FNG)](https://anl.box.com/shared/static/2nmrf3vpu1n8bpcadjqaf884vc65y8h5.h5m)
 
 ## Running a comparison
 
