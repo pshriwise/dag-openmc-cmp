@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#! /usr/bin/env python
 import os
 import sys
 
@@ -198,7 +198,7 @@ def perform_comparison(model_name, csg_statepoint, dagmc_statepoint, tally_id=1,
     # compare the n_flux of each voxel
     for i in range(csg_mean.shape[0]):
         figname = ''.join(['Neutron flux of mesh voxel', str(i), '.png'])
-        plot_new(args.model_name,
+        plot_new(model_name,
                  csg_mean[i],
                  csg_std_dev[i],
                  dag_mean[i],

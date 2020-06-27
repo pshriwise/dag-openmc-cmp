@@ -1,19 +1,19 @@
 import os
 import sys
-from argparse import ArgumentParser
 
 import numpy as np
 from shutil import copyfile
 import openmc
-import openmc.capi
 from openmc.stats import Point, Box
 
-def main(geom_type, nps, run=False, plot=False, vol_calc=False):
+def create_input(geom_type, batches, nps, plot=False, vol_calc=False):
+    openmc.reset_auto_ids()
+
     #
     model = openmc.model.Model()
 
     # settings
-    model.settings.batches = 5
+    model.settings.batches = batches
     model.settings.inactive = 0
     model.settings.particles = nps # particle per batch
     model.settings.run_mode = 'fixed source'
@@ -29,13 +29,12 @@ def main(geom_type, nps, run=False, plot=False, vol_calc=False):
     model.settings.source = source
 
     # choose geometry and material file to use
-    dag_file = os.path.join(os.getcwd(),"..", "geometry", "dagopenmc", "dagmc.h5m")
+    dag_file = os.path.join(os.getcwd(),"..","geometry", "dagopenmc", "dagmc.h5m")
     geom_file = os.path.join(os.getcwd(), "..", "geometry", "openmc", "geometry.xml")
     mat_file = os.path.join(os.getcwd(), "..", "geometry", "openmc", "materials.xml")
     if geom_type == 'dagmc':
         # set model.settings.dagmc to be true, the default 'dagmc.h5m' will be used
         model.settings.dagmc = True
-        copyfile(dag_file, "dagmc.h5m")
     elif geom_type == 'csg':
         copyfile(geom_file, "geometry.xml")
         copyfile(mat_file, "materials.xml")
@@ -122,35 +121,6 @@ def main(geom_type, nps, run=False, plot=False, vol_calc=False):
         plots.export_to_xml()
 
 
-    # run the problem
-    #openmc.run(mpi_args=['mpiexec', '-n', '4'])
-    if run:
-        openmc.run()
-
     # plot the 2D slice
     if plot:
         openmc.plot_geometry(output=True, openmc_exec='openmc', cwd='.')
-
-if __name__ == "__main__":
-
-    ap = ArgumentParser("DAG-OpenMC to DAG-MCNP comparison geometry")
-
-    ap.add_argument('-g', '--geom', type=str, default="dagmc",
-                    choices=('dagmc', 'csg'),
-                    help="Geometry type to use")
-
-    ap.add_argument('-r', '--run', default=False, action='store_true',
-                    help="If present, run OpenMC after creating the model")
-
-    ap.add_argument('-n', '--nps', type=int, default=10000,
-                    help="Number of particles per batch (5 batches)")
-
-    ap.add_argument('-v', '--vol', default=False, action="store_true",
-                     help="Perform a volume calculation")
-
-    ap.add_argument('-p', '--plot', default=False, action="store_true",
-                     help="Plot the 2D slice of geometry")
-
-    args = ap.parse_args()
-
-    main(args.geom, args.nps, args.run, args.plot, args.vol)
