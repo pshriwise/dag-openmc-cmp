@@ -6,4 +6,4 @@ mv dagmc.h5m demo_collimator
 
 # FNG model
 wget https://anl.box.com/shared/static/2nmrf3vpu1n8bpcadjqaf884vc65y8h5.h5m -O dagmc.h5m
-mv dagmc.h5m FNG
+mv dagmc.h5m FNG/dagopenmc_run
