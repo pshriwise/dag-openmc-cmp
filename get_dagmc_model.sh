@@ -1,4 +1,4 @@
-
+set -e
 
 # Collimator model
 wget https://anl.box.com/shared/static/isn5mn1y5qf2jjwr4ofnrghf11m6ep3r.h5m -O dagmc.h5m
