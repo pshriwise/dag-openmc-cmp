@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<settings>
+  <run_mode>eigenvalue</run_mode>
+  <particles>500000</particles>
+  <batches>5</batches>
+  <inactive>1</inactive>
+  <source strength="1.0">
+    <space type="box">
+      <parameters>-10.0 -10.0 -10.0 10.0 10.0 10.0</parameters>
+    </space>
+  </source>
+  <output>
+    <tallies>true</tallies>
+    <summary>true</summary>
+  </output>
+</settings>
