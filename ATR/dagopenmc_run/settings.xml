@@ -1,17 +1,24 @@
 <?xml version='1.0' encoding='utf-8'?>
 <settings>
   <run_mode>eigenvalue</run_mode>
-  <particles>500000</particles>
-  <batches>5</batches>
-  <inactive>1</inactive>
+  <particles>100000</particles>
+  <batches>10</batches>
+  <inactive>0</inactive>
   <source strength="1.0">
     <space type="box">
-      <parameters>-10.0 -10.0 -10.0 10.0 10.0 10.0</parameters>
+      <parameters>-10 -10 -10 10 10 10</parameters>
     </space>
+    <energy type="discrete">
+      <parameters>14000000.0 1.0</parameters>
+    </energy>
   </source>
   <output>
-    <tallies>true</tallies>
     <summary>true</summary>
+    <tallies>true</tallies>
   </output>
+  <source_point>
+    <write>false</write>
+  </source_point>
+  <survival_biasing>true</survival_biasing>
   <dagmc>true</dagmc>
 </settings>
