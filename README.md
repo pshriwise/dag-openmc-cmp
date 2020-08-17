@@ -16,6 +16,7 @@ To run each model they should be downloaded from the following links and placed 
 
   - [Collimator](https://anl.box.com/shared/static/isn5mn1y5qf2jjwr4ofnrghf11m6ep3r.h5m)
   - [Frascati Neutron Generator (FNG)](https://anl.box.com/shared/static/2nmrf3vpu1n8bpcadjqaf884vc65y8h5.h5m)
+  - [Advanced Test Reactor (ATR)](https://anl.box.com/shared/static/w57ambhcijysdns573jnor4215zg28mh.h5m)
 
 The `get_dagmc_models.sh` script can be used to download these models and place them in the correct locations.
 
