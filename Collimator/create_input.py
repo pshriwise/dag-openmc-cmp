@@ -1,10 +1,12 @@
-import os
 import sys
+from argparse import ArgumentParser
 
 import numpy as np
-from shutil import copyfile
 import openmc
-from openmc.stats import Point, Box
+import openmc.lib
+from openmc.stats import Point
+
+from csg_model import create_openmc_geom
 
 def create_input(geom_type, batches, nps, plot=False, vol_calc=False):
     openmc.reset_auto_ids()
@@ -19,42 +21,38 @@ def create_input(geom_type, batches, nps, plot=False, vol_calc=False):
     model.settings.run_mode = 'fixed source'
     model.settings.output = {'tallies':True, 'summary':True}
     model.settings.survival_biasing = True
-    model.settings.sourcepoint = {'write':False}
 
 
-    # iso-mesh source covers the geometry
+    # source, 14MeV at (-30, 0, 0), isotropic
     source = openmc.Source()
-    source.space = Box(lower_left=(-49.5, 5.6, -49.2), upper_right=(49.5, 77.43, 49.2))
+    source.space = Point(xyz=(-30.0, 0.0, 0.0))
     source.energy = openmc.stats.Discrete([14.0*1e6], [1.0])
     model.settings.source = source
 
-    # choose geometry and material file to use
-    dag_file = os.path.join(os.getcwd(),"..","geometry", "dagopenmc", "dagmc.h5m")
-    geom_file = os.path.join(os.getcwd(), "..", "geometry", "openmc", "geometry.xml")
-    mat_file = os.path.join(os.getcwd(), "..", "geometry", "openmc", "materials.xml")
+    geom, mats = create_openmc_geom()
+
     if geom_type == 'dagmc':
         # set model.settings.dagmc to be true, the default 'dagmc.h5m' will be used
         model.settings.dagmc = True
     elif geom_type == 'csg':
-        copyfile(geom_file, "geometry.xml")
-        copyfile(mat_file, "materials.xml")
+        geom.export_to_xml()
+        mats.export_to_xml()
 
     # stochastic volume calculation
     if vol_calc:
         model.settings.run_mode = 'volume'
-        lower_left = (-50.0, 0.0, -50.0)
-        upper_right = (50.0, 100, 50.0)
+        lower_left = (-55.0, -55.0, -55.0)
+        upper_right = (55.0, 55.0, 55.0)
         cells = [ cell for cell in geom.root_universe.cells.values() ]
         volume_calc = openmc.VolumeCalculation(cells, 10000000, lower_left, upper_right)
         model.settings.volume_calculations = [volume_calc]
 
-    model.settings.export_to_xml()
+    model.settings.export_to_xml(path='settings.xml')
 
     # tally
     tally = openmc.Tally()
     # define score
     tally.scores = ['flux']
-    tally.tally_id = 1
     # define filter
     # 175 energy group, energy unit of openmc is eV
     energy_bins = np.array([0.0,
@@ -96,10 +94,10 @@ def create_input(geom_type, batches, nps, plot=False, vol_calc=False):
     energy_filter = openmc.EnergyFilter(energy_bins*1e6)
     tally.filters.append(energy_filter)
     # mesh filter
-    mesh = openmc.Mesh(mesh_id=1, name="n_flux")
-    mesh.dimension= [10, 10, 10]
-    mesh.lower_left = (-49.5, 5.6, -49.2)
-    mesh.upper_right = (49.5, 77.43, 49.2)
+    mesh = openmc.Mesh(mesh_id=14, name="n_flux")
+    mesh.dimension= [16, 5, 1]
+    mesh.lower_left = (-40.0, -12.5, -2.5)
+    mesh.upper_right = (40.0, 12.5, 2.5)
     mesh_filter = openmc.MeshFilter(mesh)
     tally.filters.append(mesh_filter)
     # add the tally to tallies list
@@ -111,15 +109,14 @@ def create_input(geom_type, batches, nps, plot=False, vol_calc=False):
     # plot 2D slice
     if plot:
         plot1 = openmc.Plot()
-        plot1.basis = 'yz'
-        plot1.origin = (0, 30, 0)
-        plot1.width = (130, 130)
+        plot1.basis = 'xy'
+        plot1.origin = (0, 0, 0)
+        plot1.width = (120.0, 120.0)
         plot1.color_by = 'material'
-        plot1.pixels = (390, 390)
+        plot1.pixels = (1200, 1200)
         plots = openmc.Plots()
         plots.append(plot1)
         plots.export_to_xml()
-
 
     # plot the 2D slice
     if plot:

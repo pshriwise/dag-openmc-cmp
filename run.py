@@ -32,9 +32,12 @@ def main(batches, particles, run, plot, vol, n_threads):
     tally_id = 1
 
     # move to results dir so images are placed there
+    if not os.path.isdir("results"):
+        os.mkdir("results")
     os.chdir("results")
     if run:
-        perform_comparison("FNG",
+        model_name = os.path.abspath('.').split('/')[-1]
+        perform_comparison(model_name,
                            "../openmc_run/statepoint.{}.h5".format(batches),
                            "../dagopenmc_run/statepoint.{}.h5".format(batches))
 
